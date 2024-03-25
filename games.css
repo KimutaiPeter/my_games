@@ -1,0 +1,238 @@
+body {
+    /* Frame 49 */
+    /* Frame 49 */
+    position: relative;
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+
+    height: 100vh;
+    margin: 0%;
+    padding: 0%;
+
+    font-family: "Ysabeau Office", sans-serif;
+
+
+    background: linear-gradient(135.00deg, rgb(255, 103, 103) 10.744%, rgb(255, 103, 103) 19.618%, rgb(232, 46, 46) 53.533%, rgb(236, 44, 77) 68.371%, rgb(240, 41, 115) 95.532%);
+}
+
+body button {
+    cursor: pointer;
+}
+
+.prompt_container {
+    /* Frame 13 */
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 100px 0px 100px 0px;
+
+    margin-top: 100px;
+    color: white;
+
+}
+
+.prompt_container button {
+    /* Frame 15 */
+    position: static;
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 0px 50px;
+
+    border-radius: 100px;
+
+    background: rgb(57, 49, 73);
+    border: none;
+    outline: none;
+    color: white;
+
+    /* Inside Auto Layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+    margin: 0px 10px;
+    margin-top: 50px;
+}
+
+.prompt_container button img {
+    height: 50%;
+}
+
+
+
+
+
+.game_container {
+    /* Frame 49 */
+    position: relative;
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 10px;
+    margin-top: 50px;
+
+}
+
+.game_mode_controls_container {
+    /* Frame 18 */
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: flex-start;
+padding: 10px;
+gap: 20px;
+
+}
+
+.game_mode_controls_container button{
+    /* Frame 17 */
+position: static;
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: flex-start;
+align-items: center;
+padding: 5px 10px;
+font-size: 20px;
+
+
+/* Inside Auto Layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+border-radius: 50px;
+border: none;
+outline: none;
+color: white;
+background: rgb(57, 49, 73);
+}
+
+
+.game_text_container{
+    color: white;
+    padding: 100px 10px;
+}
+
+
+.game_controls_container{
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: flex-start;
+padding: 0px;
+gap: 150px;
+
+
+}
+
+
+.game_controls_container button{
+    /* Frame 17 */
+position: static;
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: flex-start;
+align-items: center;
+padding: 10px 20px;
+font-size: 30px;
+
+
+/* Inside Auto Layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+border-radius: 50px;
+border: none;
+outline: none;
+color: white;
+background: rgb(57, 49, 73);
+}
+
+
+
+
+
+.floating_auth_controls_container {
+    /* Frame 32 */
+    position: absolute;
+    right: 36px;
+    top: 23px;
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 5px;
+    padding: 9px;
+
+    border-radius: 30px;
+
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    background: rgba(57, 49, 73, 0.15);
+
+}
+
+
+.floating_auth_controls_container button {
+    /* Frame 15 */
+    position: static;
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 30px;
+    width: 150px;
+
+    font-size: 15px;
+
+    border-radius: 100px;
+
+    background: white;
+    border: none;
+    outline: none;
+    color: rgb(57, 49, 73);
+
+    /* Inside Auto Layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
+.floating_auth_controls_container button img {
+    height: 25px;
+    width: 25px;
+}
+
+.prompt_link {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0px;
+    color: white;
+
+    /* Inside Auto Layout */
+    flex: none;
+    order: 2;
+    flex-grow: 0;
+    margin: 0px 0px;
+}
+
+.prompt_link img {
+    height: 25px;
+}
