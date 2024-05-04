@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { initializeApp } from "firebase/app";
 import { collection, getDocs, getFirestore } from 'firebase/firestore'
 import { doc, setDoc, query, where, onSnapshot } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 //import firebaseConfig from '../../config.js'
 import firebaseConfig from "../../config";
@@ -16,6 +17,12 @@ export default function Register() {
     const [email, set_email] = useState('')
     const [password1, set_password1] = useState('')
     const [password2, set_password2] = useState('')
+
+
+    const navigate = useNavigate()
+    function nav(url) {
+        navigate(url);
+    }
 
 
 
@@ -49,23 +56,56 @@ export default function Register() {
     }
 
 
+
     return (
         <>
-            <div class="central_input_container">
-                <p>{message}</p>
-                <div class="input">
-                    <input type="text" placeholder="Email" onChange={(e) => { set_email(e.target.value) }} />
+            <div class="login_popup_container">
+                <div class="pop_up_input_container">
+                    <span>Enter your email</span>
+                    <input type="text" onChange={(e) => { set_email(e.target.value) }}/>
                 </div>
 
-                <div class="input">
-                    <input type="password" placeholder="Password" onChange={(e) => { set_password1(e.target.value) }} />
+                <div class="pop_up_input_container">
+                    <span>Enter your password</span>
+                    <input type="password" onChange={(e) => { set_password1(e.target.value) }}/>
                 </div>
 
-                <div class="input">
-                    <input type="password" placeholder="Password" onChange={(e) => { set_password2(e.target.value) }} />
+                <div class="pop_up_input_container">
+                    <span>Enter your password</span>
+                    <input type="password" onChange={(e) => { set_password2(e.target.value) }}/>
                 </div>
 
-                <button class="button_login" onClick={(e) => { register() }}>Register</button>
+
+                <button onClick={(e) => { register() }}>Sign up</button>
+
+
+
+                <button >Continue with google</button>
+
+            </div>
+
+            <div class="floating_auth_controls_container">
+
+                <button onClick={e=>{nav('/login')}}>
+                    <img src="./imgs/signin.svg" alt="" />
+                    <span>Login</span>
+                </button>
+
+                <button onClick={e=>{nav('/register')}}>
+                    <img class="button_image" src="./imgs/register.svg" alt="" />
+                    <span>Sign up</span>
+                </button>
+
+                <div class="prompt_link">
+                    <img src="./imgs/play.svg" alt="" />
+                    <span>Play on call</span>
+                </div>
+
+                <div class="prompt_link">
+                    <img src="./imgs/play.svg" alt="" />
+                    <span>Dating site</span>
+                </div>
+
             </div>
         </>
     )

@@ -8,9 +8,12 @@ import { collection, getDocs, getDoc, getFirestore, FieldPath } from 'firebase/f
 import { doc, setDoc, query, where, onSnapshot } from "firebase/firestore";
 import { getDatabase, onValue, ref, set } from 'firebase/database'
 
+
+//Game component
+import Game from "./games/game";
+
 import firebaseConfig from "../../config";
 import * as process from 'process';
-import images from './user2.png'
 (window).global = window;
 (window).process = process;
 (window).Buffer = [];
@@ -96,27 +99,30 @@ function Video(props) {
 
     useEffect(() => {
         if (call_ongoing) {
-            set_my_video_css({ width: "200px", height: '150px', 'border-radius': '12px', 'backgroundColor': 'black' })
+            set_my_video_css({ width: "100px", height: '75px', 'border-radius': '12px', 'backgroundColor': 'black' })
         } else {
-            set_my_video_css({ width: '600px', height: "400px", "backgroundColor": 'black', 'border-radius': '12px' })
+            set_my_video_css({ width: '300px', height: "200px", "backgroundColor": 'black', 'border-radius': '12px' })
         }
     }, [call_ongoing])
 
 
 
-    useEffect(async () => {
-        if (check_valid_meeting_code()) {
-            await navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
-                streamRef.current = stream; // Store stream reference
-                if (myVideo.current) {
-                    myVideo.current.srcObject = streamRef.current
-                }
-                setStream(stream)
-            }).catch(async err => {
-                console.log('Media problem:', err)
-            })
-            authenticate()
+    useEffect(() => {
+        async function initiator(){
+            if (check_valid_meeting_code()) {
+                await navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
+                    streamRef.current = stream; // Store stream reference
+                    if (myVideo.current) {
+                        myVideo.current.srcObject = streamRef.current
+                    }
+                    setStream(stream)
+                }).catch(async err => {
+                    console.log('Media problem:', err)
+                })
+                authenticate()
+            }
         }
+        initiator()
     }, [])
 
     function write_offer(data) {
@@ -326,18 +332,18 @@ function Video(props) {
     if (check_valid_meeting_code()) {
         return (
             <>
-                <div className="central_video_container">
+                <div className="central_video_container" style={{ position: 'absolute', top: '5px', left: '5px' }}>
 
 
                     {(() => {
                         if (!call_ongoing) {
                             return (
-                                <h4>Connecting...</h4>
+                                <h4 style={{'margin':'4px'}}>Waiting for connection...</h4>
                             )
                         }
                         if (call_ongoing) {
                             return (
-                                <div style={{ width: '600px', height: "400px", "backgroundColor": 'black', 'border-radius': '12px' }}>
+                                <div style={{ width: '300px', height: "200px", "backgroundColor": 'black', 'border-radius': '12px' }}>
                                     {(() => {
                                         if (userVideo) {
                                             return (<video playsInline ref={userVideo} autoPlay style={{ width: "100%", height: "100%" }} />)
@@ -388,7 +394,7 @@ function Video(props) {
 
                 </div>
 
-                <button className="index_button" style={{ position: 'absolute', top: '5px', left: '5px' }} onClick={(e) => { navigator.clipboard.writeText(user_data['id']) }}>Copy code</button>
+                <Game/>
             </>
         );
     } else {

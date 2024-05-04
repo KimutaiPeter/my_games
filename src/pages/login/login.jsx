@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { signInWithPopup } from "firebase/auth";
 import { getAuth, GoogleAuthProvider } from 'firebase/auth'
 
-import './css/login.css'
-import { useNavigate } from "react-router-dom";
+import './css/login_popup.css'
+import { useNavigate, } from "react-router-dom";
+
 
 import { initializeApp } from "firebase/app";
 import { collection, getDocs, getFirestore } from 'firebase/firestore'
@@ -32,6 +33,18 @@ export default function Login(prop) {
         navigate(url);
     }
 
+    function authenticate(){
+        var auth=localStorage.getItem('auth')
+        if(auth===null){
+            console.log('Empty')
+            //set_user_data({'auth':false})
+        }else{
+            var details=JSON.parse(auth)
+            navigate(-1)
+            
+        }
+    }
+
     async function check() {
 
         var db_Ref = collection(db, "users");
@@ -48,7 +61,7 @@ export default function Login(prop) {
                     console.log('Correct password')
                     var details = JSON.stringify({ id: doc.id, email: email })
                     localStorage.setItem('auth', details)
-                    prop.authenticate()
+                    authenticate()
                 } else {
                     set_message('Incorrect email or password')
                 }
@@ -89,9 +102,9 @@ export default function Login(prop) {
                         console.log('Correct password')
                         var details = JSON.stringify({ id: doc.id, email: email })
                         localStorage.setItem('auth', details)
-                        prop.authenticate()
+                        authenticate()
                     } else {
-                        set_message('Google auth failed')
+                        alert('Google auth failed')
                     }
                 });
 
@@ -105,25 +118,49 @@ export default function Login(prop) {
     const user = auth.currentUser;
 
 
-
     return (
         <>
-            <div class="central_input_container">
-                <p>{message}</p>
-                <div class="input">
-                    <input type="text" placeholder="Email" onChange={(e) => { set_email(e.target.value) }} />
+            <div class="login_popup_container">
+
+                <div class="pop_up_input_container">
+                    <span>Enter your email</span>
+                    <input type="text" onChange={(e) => { set_email(e.target.value) }}/>
                 </div>
 
-                <div class="input">
-                    <input type="password" placeholder="Password" onChange={(e) => { set_password(e.target.value) }} />
+                <div class="pop_up_input_container">
+                    <span>Enter your password</span>
+                    <input type="password"  onChange={(e) => { set_password(e.target.value) }}/>
                 </div>
 
-                <button class="button_login" onClick={e => { check() }}>Login</button>
 
-                <span>or</span>
-                <a href="/register">register</a>
+                <button onClick={e => { check() }}>Login</button>
 
-                <button class="button_login" onClick={e => { Sign_in() }}>Continue with google</button>
+                <button onClick={e => { Sign_in() }}>Continue with google</button>
+
+            </div>
+
+            <div class="floating_auth_controls_container">
+
+                <button onClick={e => { check() }}>
+                    <img src="./imgs/signin.svg" alt=""/>
+                        <span>Login</span>
+                </button>
+
+                <button onClick={e=>{nav('/register')}}>
+                    <img class="button_image" src="./imgs/register.svg" alt=""/>
+                        <span>Sign up</span>
+                </button>
+
+                <div class="prompt_link">
+                    <img src="./imgs/play.svg" alt=""/>
+                        <span>Play on call</span>
+                </div>
+
+                <div class="prompt_link">
+                    <img src="./imgs/play.svg" alt=""/>
+                        <span>Dating site</span>
+                </div>
+
             </div>
         </>
     )
