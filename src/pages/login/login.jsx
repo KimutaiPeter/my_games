@@ -38,6 +38,7 @@ export default function Login(prop) {
         if(auth===null){
             console.log('Empty')
             //set_user_data({'auth':false})
+            alert("Authentication failed")
         }else{
             var details=JSON.parse(auth)
             navigate(-1)
@@ -133,7 +134,11 @@ export default function Login(prop) {
                 </div>
 
 
-                <button onClick={e => { check() }}>Login</button>
+                <button onClick={e => { 
+                    alert("Please use google for now, We dont have enough resources to store this data"); 
+                    //check()
+
+                 }}>Login</button>
 
                 <button onClick={e => { Sign_in() }}>Continue with google</button>
 

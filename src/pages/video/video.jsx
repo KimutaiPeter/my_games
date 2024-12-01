@@ -52,6 +52,10 @@ function Video(props) {
     const [call_ongoing, set_call_ongoing] = useState(false)
     const [users, set_users] = useState([])
     const [user2, set_user2] = useState({})
+    //Sync gaming supporting data
+    const [caller,set_caller]=useState(null)
+    const [game_data,set_game_data]=useState(null)
+    const [game_message,set_game_message]=useState(null)
 
     //Video support controls
     const [mic_state, set_mic_state] = useState(true)
@@ -93,7 +97,6 @@ function Video(props) {
 
     function check_valid_meeting_code() {
         var valid = true
-
         return valid
     }
 
@@ -108,7 +111,7 @@ function Video(props) {
 
 
     useEffect(() => {
-        async function initiator(){
+        async function initiator() {
             if (check_valid_meeting_code()) {
                 await navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
                     streamRef.current = stream; // Store stream reference
@@ -191,16 +194,18 @@ function Video(props) {
                     //Post call request 
                     //Listen for the answer
                     Call_User()
+                    set_caller(true)
 
                 } else {
                     //If its another user send user data
                     Answer_Call()
+                    set_caller(false)
                 }
             } else {
                 //Even when the user is not in the database they can just join the meeting
                 Answer_Call()
+                set_caller(false)
             }
-
         }
     }, [user_data])
 
@@ -235,6 +240,23 @@ function Video(props) {
             console.log("CONNECTED");
 
         })
+        // Receiving a message
+        peer.on("data", (data) => {
+            var payload=data.toString()
+            var parsed_payload=JSON.parse(payload)
+            console.log("Received message:",parsed_payload );
+            if(parsed_payload['type']=="level"){
+                set_game_message(parsed_payload)
+            }
+            if(parsed_payload['type']=='next'){
+                set_game_message(parsed_payload)
+            }
+            if(parsed_payload['type']=='end_call'){
+                alert("Call ended")
+                document.location.href="/"
+            }
+        });
+
         peer.on('error', function (err) {
             console.log('Connection error', err.message, "+", err.name, "+", err, err)
             if (peer.destroyed) {
@@ -267,67 +289,92 @@ function Video(props) {
 
 
     function Answer_Call() {
-    const peer = new Peer({
-      initiator: false,
-      trickle: false,
-      stream: stream
-    })
-    peer.on("signal", (data) => {
-      console.log("Answering call: Send answer", { signal: data })
-      //socket.emit('ansered_call_responce', { from: socket.id, to: user2['from'], signal: data })
-      write_answer(data)
-    })
+        const peer = new Peer({
+            initiator: false,
+            trickle: false,
+            stream: stream
+        })
+        peer.on("signal", (data) => {
+            console.log("Answering call: Send answer", { signal: data })
+            //socket.emit('ansered_call_responce', { from: socket.id, to: user2['from'], signal: data })
+            write_answer(data)
+        })
+
+        peer.on("stream", (stream) => {
+            if (userVideo.current) {
+                userVideo.current.srcObject = stream
+            }
+
+        })
+
+        peer.on('connect', function () {
+            console.log("CONNECTED");
+
+        })
+        peer.on('error', function (err) {
+            console.log('Connection error', err.message, "+", err.name, "+", err, err)
+            if (peer.destroyed) {
+                console.log('The connection is destroyed, Reseting connection...')
+                respondent_reset()
+            }
+        })
+        // Receiving a message
+        peer.on("data", (data) => {
+            var payload=data.toString()
+            var parsed_payload=JSON.parse(payload)
+            console.log("Received message:",parsed_payload );
+            if(parsed_payload['type']=="game"){
+                set_game_data(parsed_payload['data'])
+            }
+            if(parsed_payload['type']=='level'){
+                set_game_message(parsed_payload)
+            }
+            if(parsed_payload['type']=='end_call'){
+                alert("Call ended")
+                document.location.href="/"
+            }
+        });
 
 
+        connectionRef.current = peer
 
 
+        function read_answer() {
+            var db = getDatabase();
+            const reference = ref(db, 'meetings/' + id + '/offer')
+            onValue(reference, (snapshot) => {
+                var data = snapshot.val();
+                console.log('Received call request', data)
+                if (data !== null && !peer.destroyed) {
+                    peer.signal(data)
+                    set_call_ongoing(true)
+                }
 
-    peer.on("stream", (stream) => {
-      if (userVideo.current) {
-        userVideo.current.srcObject = stream
-      }
-
-    })
-
-    peer.on('connect', function () {
-      console.log("CONNECTED");
-
-    })
-    peer.on('error', function (err) {
-      console.log('Connection error', err.message, "+", err.name, "+", err, err)
-      if (peer.destroyed) {
-        console.log('The connection is destroyed, Reseting connection...')
-        respondent_reset()
-      }
-    })
-
-
-    connectionRef.current = peer
-
-
-    function read_answer() {
-      var db = getDatabase();
-      const reference = ref(db, 'meetings/' + id + '/offer')
-      onValue(reference, (snapshot) => {
-        var data = snapshot.val();
-        console.log('Received call request', data)
-        if (data !== null && !peer.destroyed) {
-          peer.signal(data)
-          set_call_ongoing(true)
+            })
         }
-
-      })
+        read_answer()
     }
-    read_answer()
-  }
 
-
-
-
+    function sendMessage(message) {
+        if (connectionRef.current.connected) {
+            var payload=JSON.stringify(message)
+            connectionRef.current.send(payload);
+        } else {
+            alert("Please connect with your companion first")
+            console.error('Peer not connected');
+        }
+    }
+    window.sendMessage=sendMessage
 
     function End_Call() {
-        connectionRef.current.destroy()
+        if(connectionRef.current.connected){
+            sendMessage({type:"end_call",data:true})
+            connectionRef.current.destroy()
+        }
+        document.location.href = "/";
     }
+
+    
 
     if (check_valid_meeting_code()) {
         return (
@@ -338,7 +385,11 @@ function Video(props) {
                     {(() => {
                         if (!call_ongoing) {
                             return (
-                                <h4 style={{'margin':'4px'}}>Waiting for connection...</h4>
+                                <>
+                                <h4 style={{ 'margin': '4px' }}>Waiting for connection...</h4>
+                                <span>Use the meeting link to connect!</span>
+                                </>
+                                
                             )
                         }
                         if (call_ongoing) {
@@ -361,7 +412,6 @@ function Video(props) {
                     <div style={my_video_css}>
 
                         {(() => {
-
                             if (true) {
                                 return (<video playsInline muted ref={myVideo} autoPlay style={{ width: "100%", height: '100%' }} />)
                             } else {
@@ -388,13 +438,13 @@ function Video(props) {
                             }
                         })()}
 
-                        <img src="/img/end_call.svg" alt="" />
+                        <img src="/img/end_call.svg" alt="" onClick={e=>{End_Call()}}/>
 
                     </div>
 
                 </div>
 
-                <Game/>
+                <Game caller={caller} game_data={game_data} sendMessage={sendMessage} game_message={game_message} />
             </>
         );
     } else {

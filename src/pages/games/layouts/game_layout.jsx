@@ -57,7 +57,8 @@ export default function DT_game(props) {
                     }}>😈spicy</button>
 
                     <button onClick={(e) => {
-                        props.level_change('couples');
+                        //props.level_change('friends');
+                        alert("Currently not available")
 
                         var game_mode_controls_container = document.getElementById('game_modes_container')
                         Array.from(game_mode_controls_container.children).forEach((child) => {
@@ -69,7 +70,8 @@ export default function DT_game(props) {
                     }}>💏couples</button>
 
                     <button onClick={(e) => {
-                        props.level_change('couples');
+                        //props.level_change('couples');
+                        alert("Currently not available")
 
                         var game_mode_controls_container = document.getElementById('game_modes_container')
                         Array.from(game_mode_controls_container.children).forEach((child) => {
@@ -79,7 +81,7 @@ export default function DT_game(props) {
                         e.target.style.backgroundColor = 'white'
                         e.target.style.color = 'rgb(57, 49, 73)'
 
-                    }}>💦🍆kinky
+                    }}>👾 Extra
                     </button>
 
                 </div>

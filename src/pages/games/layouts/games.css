@@ -122,6 +122,8 @@ background: rgb(57, 49, 73);
 .game_text_container{
     color: white;
     padding: 100px 10px;
+    text-align: center;
+    max-width: 60%;
 }
 
 

@@ -6,10 +6,14 @@ import { useNavigate } from "react-router-dom";
 
 //import firebaseConfig from '../../config.js'
 import firebaseConfig from "../../config";
+import { signInWithPopup } from "firebase/auth";
+import { getAuth, GoogleAuthProvider } from 'firebase/auth'
 
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app)
+const provider = new GoogleAuthProvider()
 
 
 export default function Register() {
@@ -17,6 +21,8 @@ export default function Register() {
     const [email, set_email] = useState('')
     const [password1, set_password1] = useState('')
     const [password2, set_password2] = useState('')
+    const db = getFirestore()
+    
 
 
     const navigate = useNavigate()
@@ -57,6 +63,69 @@ export default function Register() {
 
 
 
+    function authenticate(){
+        var auth=localStorage.getItem('auth')
+        if(auth===null){
+            console.log('Empty')
+            //set_user_data({'auth':false})
+            alert("Authentication failed")
+        }else{
+            var details=JSON.parse(auth)
+            navigate(-1)
+            
+        }
+    }
+
+
+
+
+    function Sign_in() {
+        signInWithPopup(auth, provider).then(async (data) => {
+            console.log(data)
+            var user_data = data['user']
+
+
+
+            var db_Ref = collection(db, "users");
+            var q = query(db_Ref, where("email", "==", user_data['email']));
+            var querySnapshot = await getDocs(q);
+            if (querySnapshot.empty) {
+                console.log('Its empty')
+                set_message('Incorrect email or password')
+
+
+                const users = doc(collection(db, "users"), user_data['uid']);
+                await setDoc(users, { email: user_data['email'], password: 'googleid' }, { merge: true });
+
+                var details = JSON.stringify({ id: user_data['uid'], email: user_data['email'] })
+                localStorage.setItem('auth', details)
+                authenticate()
+
+            } else {
+                querySnapshot.forEach(async (doc) => {
+                    // doc.data() is never undefined for query doc snapshots
+                    console.log(doc.id, " => ", doc.data());
+                    if (doc.data()['password'] === 'googleid') {
+                        console.log('Correct password')
+                        var details = JSON.stringify({ id: doc.id, email: email })
+                        localStorage.setItem('auth', details)
+                        authenticate()
+                    } else {
+                        alert('Google auth failed')
+                    }
+                });
+
+            }
+
+        })
+    }
+
+
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+
+
     return (
         <>
             <div class="login_popup_container">
@@ -76,11 +145,14 @@ export default function Register() {
                 </div>
 
 
-                <button onClick={(e) => { register() }}>Sign up</button>
+                <button onClick={(e) => { 
+                    //register() 
+                    alert("Please login and continue with google,We dont have enough resources to store this data")
+                    }}>Sign up</button>
 
 
 
-                <button >Continue with google</button>
+                <button onClick={e=>{Sign_in()}} >Continue with google</button>
 
             </div>
 

@@ -16,6 +16,7 @@ export default function Home() {
         return (
             <>
                 <h1>We are coming soon</h1>
+                <span>PC only</span>
             </>
         )
     } else {

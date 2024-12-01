@@ -12,6 +12,19 @@ export default function DT_game(props) {
         set_current_question(props.current_question)
     }, [props.current_question])
 
+    useEffect(() => {
+        var game_mode_controls_container = document.getElementById('game_modes_container')
+        Array.from(game_mode_controls_container.children).forEach((child) => {
+            if (child.id == props.current_level) {
+                child.style.backgroundColor = 'white'
+                child.style.color = 'rgb(57, 49, 73)'
+            } else {
+                child.style = ""
+            }
+        })
+
+    }, [props.current_level])
+
 
     return (
         <>
@@ -32,54 +45,23 @@ export default function DT_game(props) {
                 </div>
 
                 <div class="game_mode_controls_container" id="game_modes_container">
-                    <button style={{ color: 'rgb(57, 49, 73)', 'background-color': 'white' }} onClick={e => {
+                    <button id='Family' style={{ color: 'rgb(57, 49, 73)', 'background-color': 'white' }} onClick={e => {
                         props.level_change('Family')
-                        var game_mode_controls_container = document.getElementById('game_modes_container')
-                        Array.from(game_mode_controls_container.children).forEach((child) => {
-                            // Your code here
-                            child.style = ""
-                        })
-                        e.target.style.backgroundColor = 'white'
-                        e.target.style.color = 'rgb(57, 49, 73)'
                     }} >😁friends</button>
 
-                    <button onClick={(e) => {
+                    <button id='friends' onClick={(e) => {
                         props.level_change('friends');
-
-                        var game_mode_controls_container = document.getElementById('game_modes_container')
-                        Array.from(game_mode_controls_container.children).forEach((child) => {
-                            // Your code here
-                            child.style = ""
-                        })
-                        e.target.style.backgroundColor = 'white'
-                        e.target.style.color = 'rgb(57, 49, 73)'
-
                     }}>😈spicy</button>
 
-                    <button onClick={(e) => {
+                    <button id='couples' onClick={(e) => {
                         props.level_change('couples');
-
-                        var game_mode_controls_container = document.getElementById('game_modes_container')
-                        Array.from(game_mode_controls_container.children).forEach((child) => {
-                            child.style = ""
-                        })
-                        e.target.style.backgroundColor = 'white'
-                        e.target.style.color = 'rgb(57, 49, 73)'
 
                     }}>💏couples</button>
 
-                    <button onClick={(e) => {
-                        props.level_change('couples');
+                    <button id='couplesp' onClick={(e) => {
+                        props.level_change('couplesp');
 
-                        var game_mode_controls_container = document.getElementById('game_modes_container')
-                        Array.from(game_mode_controls_container.children).forEach((child) => {
-                            // Your code here
-                            child.style = ""
-                        })
-                        e.target.style.backgroundColor = 'white'
-                        e.target.style.color = 'rgb(57, 49, 73)'
-
-                    }}>💦🍆kinky
+                    }}>👾Extra
                     </button>
 
                 </div>
@@ -98,7 +80,7 @@ export default function DT_game(props) {
 
             <Auth></Auth>
 
-            
+
         </>
     )
 }
